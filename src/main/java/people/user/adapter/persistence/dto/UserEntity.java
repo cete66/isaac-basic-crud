@@ -8,7 +8,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Entity
-@Table(name = "user", schema = "people")
+@Table(name = "user") //we could specify schema
 public class UserEntity {
 
     @Id

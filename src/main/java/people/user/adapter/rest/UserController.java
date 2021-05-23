@@ -50,17 +50,14 @@ public class UserController {
         if (result.hasErrors()) {
             return "add-user";
         }
+        userService.processNewUser(userRequest);
 
-        final var userId = userService.processNewUser(userRequest);
-        //TODO RETURN THIS UUID?
         return "redirect:/index";
     }
 
     @GetMapping("/edit/{id}")
     public String showUpdateForm(@PathVariable("id") @NotBlank final String id, final Model model) {
-        final var user = userService.findById(UUID.fromString(id))
-            .orElseThrow(() -> new IllegalArgumentException("User with name " + id + " not found"));
-
+        final var user = userService.findById(UUID.fromString(id));
         model.addAttribute("user", user);
         return "update-user";
     }

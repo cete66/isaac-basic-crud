@@ -30,6 +30,14 @@ public class UserRequest {
         return email;
     }
 
+    public void setName(final String name) {
+        this.name = name;
+    }
+
+    public void setEmail(final String email) {
+        this.email = email;
+    }
+
     @Override
     public boolean equals(final Object o) {
         if (this == o) return true;

@@ -1,10 +1,11 @@
 package people.user.adapter.persistence;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import javassist.NotFoundException;
 import org.springframework.stereotype.Component;
 import people.user.adapter.persistence.dto.UserEntity;
+import people.user.adapter.persistence.queries.UsersWithGoogleEmailQueryResult;
 
+import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
@@ -14,11 +15,23 @@ import java.util.UUID;
 @Transactional
 public class UserAdapter {
 
-    private static final Logger LOG = LoggerFactory.getLogger(UserAdapter.class);
     private final UserRepository userRepository;
+    private final EntityManager entityManager;
 
-    public UserAdapter(final UserRepository userRepository) {
+    public UserAdapter(final UserRepository userRepository,
+                       final EntityManager entityManager) {
         this.userRepository = userRepository;
+        this.entityManager = entityManager;
+    }
+
+    public void saveUser(final UserEntity userEntity) {
+        entityManager.createNativeQuery(
+            " insert into user (id, name, email) "
+                + " values (:id, :name, :email) ")
+            .setParameter("id", userEntity.getId())
+            .setParameter("name", userEntity.getName())
+            .setParameter("email", userEntity.getEmail())
+            .executeUpdate();
     }
 
     public Optional<UserEntity> findUserByNameAndEmail(final String name, final String email) {
@@ -42,7 +55,35 @@ public class UserAdapter {
         return userEntity.getId();
     }
 
-    public void update(final UserEntity userEntity) {
-        userRepository.saveAndFlush(userEntity);
+    public UserEntity update(final UserEntity userEntity) {
+        return userRepository.saveAndFlush(userEntity);
+    }
+
+    public void emPersist(final UserEntity userEntity) {
+        entityManager.persist(userEntity);
+    }
+
+    public UserEntity emUpdate(final UserEntity userEntity) throws NotFoundException {
+        if (entityManager.find(UserEntity.class, userEntity.getId()) != null) {
+            return entityManager.merge(userEntity);
+        } else {
+            throw new NotFoundException(String.format("User with id %s not found", userEntity.getId()));
+        }
+    }
+
+    public Optional<UserEntity> emFindById(final UUID userId) {
+        return Optional.ofNullable(entityManager.find(UserEntity.class, userId));
+    }
+
+    public List<UserEntity> emFindAllUsers() {
+        return entityManager.createQuery(
+            "select ue From UserEntity ue", UserEntity.class)
+            .getResultList();
+    }
+
+    public List<UsersWithGoogleEmailQueryResult> emFindUsersWithGoogleEmail() {
+        return entityManager.createNamedQuery(
+            "usersWithGoogleEmailQuery", UsersWithGoogleEmailQueryResult.class)
+            .getResultList();
     }
 }

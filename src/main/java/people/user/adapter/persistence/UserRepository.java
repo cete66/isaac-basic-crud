@@ -14,7 +14,9 @@ import java.util.UUID;
 @Transactional
 public interface UserRepository extends JpaRepository<UserEntity, UUID> {
 
+    //derived query method -> spring
     Optional<UserEntity> findByNameAndEmail(final String name, final String email);
+
 
     @Modifying
     @Query("update From UserEntity ue set ue.name = :name, ue.email = :email where ue.id = :id")

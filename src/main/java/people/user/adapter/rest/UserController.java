@@ -11,11 +11,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import people.user.UserService;
+import people.user.adapter.persistence.dto.UserEntity;
 import people.user.adapter.rest.dto.UserRequest;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 @Controller
@@ -37,7 +39,7 @@ public class UserController {
 
     @GetMapping("/index")
     public String showUserList(final Model model) {
-        final var users = userService.findAll();
+        final List<UserEntity> users = userService.findAll();
         LOG.info("Users list -> {}", Arrays.toString(users.toArray()));
         model.addAttribute("users", userService.findAll());
         return "index";
@@ -52,7 +54,7 @@ public class UserController {
         }
         userService.processNewUser(userRequest);
 
-        return "redirect:/index";
+        return "redirect:/index"; //llama al path del controller /index
     }
 
     @GetMapping("/edit/{id}")

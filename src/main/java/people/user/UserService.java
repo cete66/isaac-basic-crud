@@ -27,7 +27,7 @@ public class UserService {
 
         if (userOpt.isEmpty()) {
             return userAdapter.persist(
-                new UserEntity(UUID.randomUUID(), userRequest.getName(), userRequest.getEmail()));
+                new UserEntity(UUID.randomUUID(), userRequest.getName(), userRequest.getEmail(), null));
         } else {
             throw new InvalidParameterException(
                 String.format("User %s already exists in the system.", userRequest));

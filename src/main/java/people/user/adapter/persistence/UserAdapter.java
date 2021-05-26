@@ -1,6 +1,7 @@
 package people.user.adapter.persistence;
 
 import javassist.NotFoundException;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import people.user.adapter.persistence.dto.UserEntity;
 import people.user.adapter.persistence.queries.UsersWithGoogleEmailQueryResult;
@@ -17,11 +18,19 @@ public class UserAdapter {
 
     private final UserRepository userRepository;
     private final EntityManager entityManager;
+    private final JdbcTemplate jdbcTemplate;
 
     public UserAdapter(final UserRepository userRepository,
-                       final EntityManager entityManager) {
+                       final EntityManager entityManager,
+                       final JdbcTemplate jdbcTemplate) {
         this.userRepository = userRepository;
         this.entityManager = entityManager;
+        this.jdbcTemplate = jdbcTemplate;
+    }
+
+    public void jdbcSaveUser(final UserEntity userEntity) {
+        jdbcTemplate.update(" insert into user (id, name, email) "
+            + " values (?, ?, ?) ", userEntity.getId(), userEntity.getName(), userEntity.getEmail());
     }
 
     public void saveUser(final UserEntity userEntity) {

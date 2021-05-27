@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add User</title>
+</head>
+<body>
+<div th:switch="${loggeduser}">
+    <div th:case="null">
+        <form action="#" th:action="@{/register}" th:object="${registerRequest}" method="post">
+            <label for="email">Email</label>
+            <input type="text" th:field="*{email}" id="email" placeholder="Email">
+            <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></span>
+            <label for="password">Password</label>
+            <input type="password" th:field="*{password}" id="password" placeholder="Password">
+            <span th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></span>
+            <label for="passwordRetyped">Retype password</label>
+            <input type="password" th:field="*{passwordRetyped}" id="passwordRetyped" placeholder="passwordRetyped">
+            <span th:if="${#fields.hasErrors('passwordRetyped')}" th:errors="*{passwordRetyped}"></span>
+            <span th:switch="*{email}">
+                <span th:case="null"><input type="submit" value="Register"></span>
+                <p th:case="*"><a href="/index">Return to index</a></p>
+            </span>
+        </form>
+    </div>
+    <p th:case="*">
+        <a href="/index">Return to index</a>
+    </p>
+</div>
+
+</body>
+</html>

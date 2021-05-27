@@ -27,9 +27,14 @@
       </tr>
       </tbody>
     </table>
-    <!-- <p th:text="${result}"></p> -->
   </div>
-  <p><a href="/signup">Add a new user</a></p>
+  <div th:switch="${loggeduser}">
+    <p th:case="null"><a href="/loadlogin">Login</a></p>
+    <p th:case="*">
+      <p><a href="/signup">Add a new user</a></p>
+      <p><a href="/logout">Logout</a></p>
+    </p>
+  </div>
 </div>
 </body>
 </html>

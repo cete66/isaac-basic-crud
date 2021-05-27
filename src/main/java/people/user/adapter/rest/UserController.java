@@ -16,7 +16,6 @@ import people.user.adapter.rest.dto.UserRequest;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -39,9 +38,11 @@ public class UserController {
 
     @GetMapping("/index")
     public String showUserList(final Model model) {
+        LOG.info(" /index llamado -> {}", model);
         final List<UserEntity> users = userService.findAll();
-        LOG.info("Users list -> {}", Arrays.toString(users.toArray()));
         model.addAttribute("users", userService.findAll());
+        reset(model);
+
         return "index";
     }
 
@@ -79,5 +80,12 @@ public class UserController {
     public String deleteUser(@PathVariable("id") String id, Model model) {
         userService.delete(UUID.fromString(id));
         return "redirect:/index";
+    }
+
+    private void reset(final Model model) {
+        model.addAttribute("registerRequest", null);
+        if (model.containsAttribute("loggeduser")) {
+            model.addAttribute("loggeduser", null);
+        }
     }
 }

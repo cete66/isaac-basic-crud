@@ -51,11 +51,4 @@ public class UserRequest {
         return Objects.hash(name, email);
     }
 
-    @Override
-    public String toString() {
-        return "UserRequest{" +
-            "name='" + name + '\'' +
-            ", email='" + email + '\'' +
-            '}';
-    }
 }

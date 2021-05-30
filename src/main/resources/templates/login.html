@@ -6,7 +6,7 @@
 </head>
 <body>
 <div th:switch="${loggeduser}">
-  <div th:case="*">
+  <div th:case="null">
     <form action="#" th:action="@{/login}" th:object="${loginRequest}" method="post">
       <label for="email">Email</label>
       <input type="text" th:field="*{email}" id="email" placeholder="Email">
@@ -18,7 +18,7 @@
     </form>
     <p><a href="/registry">Register</a></p> <!-- redirects to register formulary -->
   </div>
-  <p th:case="null">
+  <p th:case="*">
     <a href="/index">Return to index</a>
   </p>
 </div>

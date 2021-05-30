@@ -19,13 +19,45 @@ public class UserAdapter {
     private final UserRepository userRepository;
     private final EntityManager entityManager;
     private final JdbcTemplate jdbcTemplate;
+    //private final Connection connection;
 
     public UserAdapter(final UserRepository userRepository,
                        final EntityManager entityManager,
-                       final JdbcTemplate jdbcTemplate) {
+                       final JdbcTemplate jdbcTemplate
+                       //final Connection connection
+    ) {
         this.userRepository = userRepository;
         this.entityManager = entityManager;
         this.jdbcTemplate = jdbcTemplate;
+        //this.connection = connection;
+    }
+
+    /*@Transactional(rollbackOn = SQLException.class)
+    public void insert(final UserEntity userEntity) throws SQLException {
+
+        try (final PreparedStatement ps = connection.prepareStatement(
+            " insert into user (id, name, email) "
+            + " values (?, ?, ?) ")) {
+            ps.setString(1, userEntity.getId().toString());
+            ps.setString(2, userEntity.getName());
+            ps.setString(3, userEntity.getEmail());
+
+            ps.executeUpdate();
+        }
+
+    }*/
+
+    public List<UserEntity> emFindUsersWithGoogleEmail() {
+        return entityManager.createNativeQuery(
+            " select u.id id, u.name name, u.email email "
+            + " from user u "
+            + " where u.email like '%@gmail.%' ", UserEntity.class).getResultList();
+    }
+
+    public List<UsersWithGoogleEmailQueryResult> emNamedFindUsersWithGoogleEmail() {
+        return entityManager.createNamedQuery(
+            "usersWithGoogleEmailQuery", UsersWithGoogleEmailQueryResult.class)
+            .getResultList();
     }
 
     public void jdbcSaveUser(final UserEntity userEntity) {
@@ -90,9 +122,5 @@ public class UserAdapter {
             .getResultList();
     }
 
-    public List<UsersWithGoogleEmailQueryResult> emFindUsersWithGoogleEmail() {
-        return entityManager.createNamedQuery(
-            "usersWithGoogleEmailQuery", UsersWithGoogleEmailQueryResult.class)
-            .getResultList();
-    }
+
 }
